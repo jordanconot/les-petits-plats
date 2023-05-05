@@ -1,0 +1,441 @@
+ul {
+    list-style: none;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Lato', sans-serif;
+}
+
+/*--------------Header--------------------------------*/
+
+header {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+#logo {
+    width: 268px;
+}
+
+/*--------------Main--------------------------------*/
+
+main {
+    width: 85%;
+    display: flex;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    flex-flow: row wrap;
+    margin-top: 25px;
+}
+
+/*--------------Search--------------------------------*/
+#section_search {
+    width: 100%;
+}
+
+#searchbar {
+    width: 100%;
+    height: 70px;
+    border: none;
+    border-radius: 5px;
+    background-color: #E7E7E7;
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #ACACAC;
+    padding-left: 15px;
+}
+
+#searchbar::placeholder {
+    opacity: 0.50;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+}
+
+.opacity {
+    opacity: 0.5;
+}
+
+#searchbar:focus {
+    outline: 3px solid #ED6454;
+}
+
+#logo_search {
+    cursor: pointer;
+    position: absolute;
+    right: 160px;
+    top: 190px;
+}
+
+.container_tags {
+    display: flex;
+    gap: 3%;
+}
+
+#ingredients_input {
+    background-color: #3282F7;
+}
+#ingredients_input:focus {
+    width: 667px;
+    
+}
+
+#appareils_input {
+    background-color: #68D9A4;
+}
+
+#ustensiles_input {
+    background-color: #ED6454;
+}
+
+.tag_input {
+    height: 70px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+.cursor {
+    cursor:auto;
+}
+
+.tag_input::placeholder {
+    color: white;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+    padding-right: 50px;
+}
+
+
+/*--------------TAG SEARCHED------------------------ */
+
+#tags_searched {
+    display: flex;
+    height: 50px;
+    gap: 25px;
+}
+
+.ingredient_selected {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    height: 37px;
+    width: auto;
+    border-radius: 5px;
+    border: none;
+    background-color: #3282F7;
+    color: white;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+}
+
+.appareil_selected {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    height: 37px;
+    width: auto;
+    border-radius: 5px;
+    border: none;
+    background-color: #68D9A4;
+    color: white;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+}
+
+.ustensile_selected {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    height: 37px;
+    width: auto;
+    border-radius: 5px;
+    border: none;
+    background-color: #ED6454;
+    color: white;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+}
+
+.name_items_liste{
+    margin-left: 15px;
+}
+
+.close_btn {
+    height: 20px;
+    width: 20px;
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+.tag_input:focus {
+    outline: none;
+    color: white;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+}
+
+/*--------------Gallery--------------------------------*/
+
+#section_result {
+    width: 100%;
+}
+
+.recette_section {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 75px;
+    gap: 25px;
+}
+
+.recette_section_article {
+    width: 380px;
+    height: 380px;
+    max-width: 700px;
+}
+
+.recette_section_img {
+    border-radius: 5px 5px 0px 0px;
+    height: 52%;
+    width: 100%;
+    margin: -5px 0px;
+    object-fit: cover;
+}
+
+.recette_section_recette {
+    background: #E7E7E7;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 48%;
+    overflow: hidden;
+    padding: 10px 20px 10px 20px;
+}
+
+.recette_section_title_prep_time {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+.recette_section_title {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    color: #000000;
+    margin: 0;
+}
+
+.recette_section_prep_time {
+    font-weight: 700;
+    font-size: 18px;
+    text-align: right;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+}
+
+.font_weight {
+    font-weight: 300;
+}
+
+.recette_section_ingredients_instructions {
+    display: flex;
+    gap: 27px;
+}
+
+.recette_section_ingredients_liste {
+    width: 100%;
+    max-height: 100px;
+    padding: 0;
+    margin: 0;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 14px;
+    color: #000000;
+}
+
+.recette_section_instructions {
+    font-size: 12px;
+    line-height: 13px;
+    width: 100%;
+    overflow: hidden;
+    margin: 0;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    font-family: 'Roboto';
+}
+
+/*-----------------------Search----------------------- */
+/*Ingredients*/
+
+.filter_ingredients {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    padding: 10px;
+    width: 100%;
+    max-height: 350px;
+    overflow: auto;
+    border-radius: 5px;
+}
+
+.filter_select_ingredients {
+    background-color: #3282F7
+}
+
+.dropdown {
+    position: relative;
+    border-radius: 5px;
+}
+
+.filter_ingredients li {
+    width: 33%;
+    color: white;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    cursor: pointer;
+}
+
+.filter_ingredients li::first-letter {
+    text-transform: uppercase;
+}
+
+
+/*----------------------Appareil-----------------*/
+.filter_appareils {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    padding: 10px;
+    width: 100%;
+    max-height: 350px;
+    overflow: auto;
+    border-radius: 5px;
+}
+
+.filter_appareils li {
+    width: 33%;
+    color: white;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    cursor: pointer;
+}
+.filter_appareils li::first-letter {
+    text-transform: uppercase;
+}
+
+.filter_select_appareils {
+    background-color: #68D9A4;
+}
+
+/*-----------------------------------Ustensiles----------------------*/
+
+.filter_ustensiles {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    padding: 10px;
+    width: 100%;
+    max-height: 350px;
+    overflow: auto;
+    border-radius: 5px;
+}
+
+.filter_ustensiles li {
+    width: 33%;
+    color: white;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    cursor: pointer;
+}
+
+.filter_ustensiles li::first-letter {
+    text-transform: uppercase;
+}
+
+.filter_select_ustensiles {
+    background-color: #ED6454;
+}
+
+.none {
+    display: none;
+}
+
+.flex {
+    width: 667px;
+}
+
+.arrow {
+    height: 100%;
+    pointer-events: none;
+    position: absolute;
+    right: 25px;
+    color: white;
+    top: 25px;
+}
+
+@media screen and (max-width : 1200px) {
+    #logo_search {
+        right: 130px;
+    }
+}
+
+@media screen and (max-width : 840px) {
+    #logo_search {
+        right: 100px;
+    }
+}
+
+@media screen and (max-width : 600px) {
+    #logo_search {
+        right: 80px;
+    }
+}
