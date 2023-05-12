@@ -27,9 +27,9 @@ function searchBar() {
   });
 }
 
-//Lancer la recherche en filtrant avec toutes les façon demandées
+//Rechercher une recette en filtrant avec toutes les façon demandées
 function filterByRequest(recipe) {
-  return filterByName(recipe) || filterByDescription(recipe) || filterByIngredient(recipe) || filterByWordGroup(recipe);
+  return filterByIngredient(recipe) || filterByName(recipe) || filterByDescription(recipe) || filterByWordGroup(recipe);
 }
 
 // Recherche par groupe de mots
@@ -55,6 +55,27 @@ function filterByWordGroup(recipe) {
 function filterRecipes() {
   const recipes = allRecipes.filter((recipe) => {
     return filterByRequest(recipe);
+  });
+  filteredRecipes = recipes;
+  displayData(recipes);
+}
+
+// Filtrer par tags ingredients
+function filterBySelectedIngredients(recipe) {
+  if (tagSelected.length === 0) {
+    return true;
+  }
+  return (
+    recipe.ingredients.filter((ingredient) => {
+      return tagSelected.some((selectedIngredient) => selectedIngredient.toLowerCase() === ingredient.ingredient.toLowerCase());
+    }).length === tagSelected.length
+  );
+}
+
+//Afficher les recettes par tags ingredients sélectionnés
+function filterRecipesByIngredientsSelected() {
+  const recipes = allRecipes.filter((recipe) => {
+    return filterBySelectedIngredients(recipe);
   });
   filteredRecipes = recipes;
   displayData(recipes);
@@ -87,6 +108,7 @@ function filterByIngredient(recipe) {
     }).length === ingredients.length
   );
 }
+
 //Afficher la liste des ingredients
 function displayIngredients(recipes) {
   let array = [];
@@ -254,7 +276,15 @@ function addIngredient(ingredientEvent) {
   tagContainer.querySelector('.close_btn').addEventListener('click', () => {
     searchTag.removeChild(tagContainer); // Supprimer le tag séléctionner
     ingredientEvent.target.classList.remove('none'); // Réafficher dans la liste le tag supprimer
+    const index = tagSelected.indexOf(itemsSelected);
+    if (index !== -1) {
+      tagSelected.splice(index, 1);
+      filterRecipesByIngredientsSelected();
+    }
   });
+  tagSelected.push(itemsSelected);
+  console.log(tagSelected);
+  filterRecipesByIngredientsSelected();
 }
 //ajouter le tag ingredient
 function addTagIngredient() {
@@ -283,8 +313,6 @@ function filterIngredients() {
 //Ecouteur evenement sur l'input ingredient
 const searchInputIngredient = document.getElementById('ingredients_input');
 searchInputIngredient.addEventListener('input', filterIngredients);
-
-
 
 //Ajouter un appareil
 function addAppliance(appliancetEvent) {
