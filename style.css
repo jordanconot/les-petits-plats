@@ -373,6 +373,11 @@ main {
     background-color: #68D9A4;
 }
 
+.appareils_results:hover {
+    background-color: aquamarine;
+    border-radius: 7px;
+}
+
 /*-----------------------------------Ustensiles----------------------*/
 
 .filter_ustensiles {
@@ -407,6 +412,11 @@ main {
 
 .filter_select_ustensiles {
     background-color: #ED6454;
+}
+
+.ustensiles_results:hover {
+    background-color: brown;
+    border-radius: 7px;
 }
 
 .none {

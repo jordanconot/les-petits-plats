@@ -15,6 +15,7 @@ let tagUstensilsSelected = [];
 let wordGroup = [];
 let selectedIngredients = [];
 
+
 // Rechercher une recette avec la bar de recherche
 function searchBar() {
   const researchBar = document.getElementById('searchbar');
@@ -104,7 +105,6 @@ function filterRecipesByAppliancesSelected() {
     return filterBySelectedAppliances(recipe);
   });
   filteredRecipes = recipes;
-  console.log(recipes);
   displayData(recipes);
 }
 
@@ -319,7 +319,6 @@ function addIngredient(ingredientEvent) {
       tagIngredientsSelected.splice(index, 1);
       filterRecipesByIngredientsSelected();
     }
-    
   });
 
   tagIngredientsSelected.push(itemsSelected);
@@ -348,8 +347,18 @@ function addTagIngredient() {
 }
 // Filtrer les ingredients avec l'input ingredients
 function filterIngredients(availableIngredients) {
+  const searchValue = document.getElementById('ingredients_input').value.toLowerCase();
   const ingredientListItems = document.querySelectorAll('.ingredients_results');
   const selectedIngredients = document.querySelectorAll('.ingredient_selected .name_items_liste');
+  
+  ingredientListItems.forEach((item) => {
+    const applianceName = item.innerText.toLowerCase();
+    if (applianceName.includes(searchValue)) {
+      item.classList.remove('none');
+    } else {
+      item.classList.add('none');
+    }
+  });
   ingredientListItems.forEach((item) => {
     const ingredientName = item.innerText.toLowerCase();
     if (availableIngredients.includes(ingredientName) && !isIngredientSelected(ingredientName, selectedIngredients)) {
@@ -366,25 +375,24 @@ searchInputIngredient.addEventListener('input', filterIngredients);
 //Ajouter un appareil
 function addAppliance(appliancetEvent) {
   const searchTag = document.querySelector('.tags_searched');
-  let itemsSelected = appliancetEvent.target.innerText;
+  const itemsSelected = appliancetEvent.target.innerText;
   let tagContainer = document.createElement('div');
   tagContainer.innerHTML = '';
   tagContainer.classList.add('appareil_selected');
   tagContainer.innerHTML = `<p class="name_items_liste">${itemsSelected}</p><img class="close_btn" src='./assets/close-selected.svg'></i>`;
 
-  appliancetEvent.target.classList.add('none'); // Supprimer de la liste le tag séléctionner
   searchTag.appendChild(tagContainer); // Afficher l'ingrédient séléctionner
   tagContainer.querySelector('.close_btn').addEventListener('click', () => {
     searchTag.removeChild(tagContainer); // Supprimer le tag séléctionner
-    appliancetEvent.target.classList.remove('none'); // Réafficher dans la liste le tag supprimer
     tagAppliancesSelected = tagAppliancesSelected.filter((appliance) => {
       return appliance !== itemsSelected;
     });
     filterRecipesByAppliancesSelected();
+    
   });
   tagAppliancesSelected.push(itemsSelected);
-  console.log(tagAppliancesSelected);
   filterRecipesByAppliancesSelected();
+
 }
 // ajouter le tag appareil
 function addTagAppliance() {
