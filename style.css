@@ -120,6 +120,10 @@ main {
     height: 50px;
     gap: 25px;
 }
+.ingredients_results:hover {
+    background-color: mediumblue;
+    border-radius: 7px;
+}
 
 .ingredient_selected {
     display: flex;
