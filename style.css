@@ -120,6 +120,10 @@ main {
     height: 50px;
     gap: 25px;
 }
+.ingredients_results:hover {
+    background-color: mediumblue;
+    border-radius: 7px;
+}
 
 .ingredient_selected {
     display: flex;
@@ -369,6 +373,11 @@ main {
     background-color: #68D9A4;
 }
 
+.appareils_results:hover {
+    background-color: aquamarine;
+    border-radius: 7px;
+}
+
 /*-----------------------------------Ustensiles----------------------*/
 
 .filter_ustensiles {
@@ -403,6 +412,11 @@ main {
 
 .filter_select_ustensiles {
     background-color: #ED6454;
+}
+
+.ustensiles_results:hover {
+    background-color: brown;
+    border-radius: 7px;
 }
 
 .none {
