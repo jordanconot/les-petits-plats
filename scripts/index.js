@@ -67,6 +67,12 @@ function filterRecipes() {
   displayData(recipes);
 }
 
+// function filterBySelected(recipe) {
+//   return (
+//     filterByIngredient(recipe) || filterBySelectedIngredients(recipe) || filterBySelectedAppliances(recipe)
+//   )
+// }
+
 // Filtrer par tags ingredients
 function filterBySelectedIngredients(recipe) {
   if (tagIngredientsSelected.length === 0) {
@@ -429,7 +435,6 @@ function filterIngredients() {
   const selectedIngredients = document.querySelectorAll('.ingredient_selected .name_items_liste');
   const searchValue = document.getElementById('ingredients_input').value.toLowerCase();
 
-//chercher ingredient depuis l'input
   ingredientListItems.forEach((item) => {
     const ingredientName = item.innerText.toLowerCase();
     const isTagMatch = ingredientName.includes(searchValue);
@@ -441,41 +446,33 @@ function filterIngredients() {
     } else {
       item.classList.add('none');
     }
-  }); 
-//Si input vide, affiche tous les ingredients
+  });
+
+console.log(availableIngredients);
+
+  
+
   if (searchValue === '') {
     ingredientListItems.forEach((item) => {
       item.classList.remove('none');
     });
   }
 
-  
+  ingredientListItems.forEach((item) => {
+    const ingredientName = item.innerText.toLowerCase();
+    if(availableIngredients.includes(ingredientName) && !isIngredientSelected(ingredientName, selectedIngredients)) {
+      console.log(availableIngredients);
+      item.classList.remove('none');
+    } else {
+      item.classList.add('none');
+    }
+  })
 }
-
-// Selection tag au clique
-// function filterIngredientsBySelect(availableIngredients) {
-
-//   const ingredientListItems = document.querySelectorAll('.ingredients_results');
-//   const selectedIngredients = document.querySelectorAll('.ingredient_selected .name_items_liste');
-//   const ingredientName = item.innerText.toLowerCase();
-  
-  // ingredientListItems.forEach((item) => {
-  //   if(availableIngredients.includes(ingredientName) && !isIngredientSelected(ingredientName, selectedIngredients)) {
-  //     item.classList.remove('none');
-  //   } else {
-  //     item.classList.add('none');
-  //   }
-  // })
-// }
-
 
 
 //Ecouteur evenement sur l'input ingredient
 const searchTagIngredient = document.getElementById('ingredients_input');
 searchTagIngredient.addEventListener('input', filterIngredients);
-
-// const searchTagIngredientOnClick = document.getElementById('ingredients_input');
-// searchTagIngredientOnClick.addEventListener('input', filterIngredientsBySelect)
 
 // const ingredientList = document.querySelectorAll('.ingredients_results');
 // ingredientList.addEventListener('click', filterIngredients);
