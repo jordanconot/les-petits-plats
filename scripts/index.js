@@ -448,7 +448,7 @@ function filterIngredients() {
     }
   });
 
-console.log(availableIngredients);
+
 
   
 
@@ -458,15 +458,15 @@ console.log(availableIngredients);
     });
   }
 
-  ingredientListItems.forEach((item) => {
-    const ingredientName = item.innerText.toLowerCase();
-    if(availableIngredients.includes(ingredientName) && !isIngredientSelected(ingredientName, selectedIngredients)) {
-      console.log(availableIngredients);
-      item.classList.remove('none');
-    } else {
-      item.classList.add('none');
-    }
-  })
+  // ingredientListItems.forEach((item) => {
+  //   const ingredientName = item.innerText.toLowerCase();
+  //   if(availableIngredients.includes(ingredientName) && !isIngredientSelected(ingredientName, selectedIngredients)) {
+  //     console.log(availableIngredients);
+  //     item.classList.remove('none');
+  //   } else {
+  //     item.classList.add('none');
+  //   }
+  // })
 }
 
 
