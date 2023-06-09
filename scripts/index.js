@@ -67,12 +67,6 @@ function filterRecipes() {
   displayData(recipes);
 }
 
-// function filterBySelected(recipe) {
-//   return (
-//     filterByIngredient(recipe) || filterBySelectedIngredients(recipe) || filterBySelectedAppliances(recipe)
-//   )
-// }
-
 // Filtrer par tags ingredients
 function filterBySelectedIngredients(recipe) {
   if (tagIngredientsSelected.length === 0) {
@@ -97,7 +91,7 @@ function filterRecipesByIngredientsSelected() {
   const availableAppliances = getAvailableAppliances(recipes);
   const availableUstensils = getAvailableUstensils(recipes);
 
-  filterIngredients();
+  filterIngredients(true);
   filterAppliances(availableAppliances);
   filterUstensils(availableUstensils);
   displayData(recipes);
@@ -428,59 +422,52 @@ function addTagIngredient() {
   }
 }
 
-// Filtrer les ingredients avec l'input ingredients------------------------- A REVOIR-----------------------------
-function filterIngredients() {
+// Filtrer les ingredients avec l'input ingredients
+function filterIngredients(tag){
 
   const ingredientListItems = document.querySelectorAll('.ingredients_results');
   const selectedIngredients = document.querySelectorAll('.ingredient_selected .name_items_liste');
   const searchValue = document.getElementById('ingredients_input').value.toLowerCase();
+  const input = document.getElementById('ingredients_input');
 
-  ingredientListItems.forEach((item) => {
-    const ingredientName = item.innerText.toLowerCase();
-    const isTagMatch = ingredientName.includes(searchValue);
-    const isSearchMatch = availableIngredients.includes(ingredientName);
-    const isSelected = isIngredientSelected(ingredientName, selectedIngredients);
-
-    if ((searchValue && (isTagMatch || isSearchMatch)) || isSelected) {
-      item.classList.remove('none');
-    } else {
-      item.classList.add('none');
-    }
-  });
-
-
-
-  
-
-  if (searchValue === '') {
     ingredientListItems.forEach((item) => {
-      item.classList.remove('none');
+      const ingredientName = item.innerText.toLowerCase();
+      const isTagMatch = ingredientName.includes(searchValue);
+      const isSearchMatch = availableIngredients.includes(ingredientName);
+      const isSelected = isIngredientSelected(ingredientName, selectedIngredients);
+  
+      if ((searchValue && (isTagMatch || isSearchMatch)) || isSelected) {
+        item.classList.remove('none');
+      } else {
+        item.classList.add('none');
+      }
     });
+
+    if (searchValue === '') {
+      ingredientListItems.forEach((item) => {
+        item.classList.remove('none');
+      });
+    }
+
+   if(tag === true) {
+    input.classList.add('none');
+    ingredientListItems.forEach((item) => {
+      const ingredientName = item.innerText.toLowerCase();
+      if(availableIngredients.includes(ingredientName) && !isIngredientSelected(ingredientName, selectedIngredients)) {
+        item.classList.remove('none');
+      } else {
+        item.classList.add('none');
+      }
+    })
+    input.classList.remove('none');
   }
-
-  // ingredientListItems.forEach((item) => {
-  //   const ingredientName = item.innerText.toLowerCase();
-  //   if(availableIngredients.includes(ingredientName) && !isIngredientSelected(ingredientName, selectedIngredients)) {
-  //     console.log(availableIngredients);
-  //     item.classList.remove('none');
-  //   } else {
-  //     item.classList.add('none');
-  //   }
-  // })
 }
-
 
 //Ecouteur evenement sur l'input ingredient
 const searchTagIngredient = document.getElementById('ingredients_input');
 searchTagIngredient.addEventListener('input', filterIngredients);
 
-// const ingredientList = document.querySelectorAll('.ingredients_results');
-// ingredientList.addEventListener('click', filterIngredients);
-
-
-
-
-
+//---------------------------------------------------APPLIANCE---------------------------------------------------------
 function isApplianceSelected(applianceName, selectedAppliances) {
   for (let i = 0; i < selectedAppliances.length; i++) {
     if (selectedAppliances[i].innerText.toLowerCase() === applianceName) {
@@ -489,24 +476,6 @@ function isApplianceSelected(applianceName, selectedAppliances) {
   }
   return false;
 }
-
-function isUstensilSelected(ustensilName, selectedUstensils) {
-  for (let i = 0; i < selectedUstensils.length; i++) {
-    if (selectedUstensils[i].innerText.toLowerCase() === ustensilName) {
-      return true;
-    }
-  }
-  return false;
-}
-
-
-
-
-
-
-
-//---------------------------------------------------APPLIANCE---------------------------------------------------------
-
 
 //Ajouter un appareil
 function addAppliance(appliancetEvent) {
@@ -575,6 +544,16 @@ searchInputAppliance.addEventListener('input', filterAppliances);
 
 
 //--------------------------------------------------------USTENSILS---------------------------------------------------------------
+
+function isUstensilSelected(ustensilName, selectedUstensils) {
+  for (let i = 0; i < selectedUstensils.length; i++) {
+    if (selectedUstensils[i].innerText.toLowerCase() === ustensilName) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // Ajouter un ustensile
 function addUstensil(ustensiltEvent) {
   const searchTag = document.querySelector('.tags_searched');
