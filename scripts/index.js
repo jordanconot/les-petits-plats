@@ -44,9 +44,9 @@ function searchBar() {
     wordGroup = e.target.value.trim().toLowerCase().split(' ');
     request = wordGroup.join(' ');
     description = wordGroup.join(' ');
-   
+
     filterRecipes();
-    
+    updateFilterLists();
   });
 }
 
@@ -74,14 +74,66 @@ function filterByWordGroup(recipe) {
   });
 }
 
+// Filtrer les listes déroulantes pour la recherche principales
+function updateFilterLists() {
+  
+
+  let filteredIngredients = [];
+  let filteredAppliances = [];
+  let filteredUstensils = [];
+
+  filteredRecipes.forEach((recipe) => {
+    recipe.ingredients.forEach((ingredient) => {
+      const ingredientName = ingredient.ingredient.toLowerCase();
+      if (!filteredIngredients.includes(ingredientName)) {
+        filteredIngredients.push(ingredientName);
+      }
+    });
+
+    if (recipe.appliance && !filteredAppliances.includes(recipe.appliance.toLowerCase())) {
+      filteredAppliances.push(recipe.appliance.toLowerCase());
+    }
+
+    recipe.ustensils.forEach((ustensil) => {
+      const ustensilName = ustensil.toLowerCase();
+      if (!filteredUstensils.includes(ustensilName)) {
+        filteredUstensils.push(ustensilName);
+      }
+    });
+  });
+
+  // ingredients = filteredIngredients;
+  // appliances = filteredAppliances;
+  // ustensils = filteredUstensils;
+
+  
+
+  const unavailableIngredients = availableIngredients.filter((ingredient) => {
+    return !filteredIngredients.includes(ingredient.toLowerCase());
+  });
+
+  const ingredientListItems = document.querySelectorAll('.ingredients_results');
+
+  ingredientListItems.forEach((item) => {
+    const ingredientName = item.innerText.toLowerCase();
+    if (unavailableIngredients.includes(ingredientName)) {
+      item.classList.add('none');
+    }
+  });
+
+  console.log(unavailableIngredients);
+  console.log(filteredIngredients);
+  filterIngredients(true);
+  filterAppliances(true);
+  filterUstensils(true);
+}
 // Filter les recettes avec la methode filter en recherchant par titre de la recette et dans la description
 function filterRecipes() {
-  
   const recipes = allRecipes.filter((recipe) => {
     return filterByRequest(recipe);
   });
   filteredRecipes = recipes;
-  displayData(recipes);
+  displayData(filteredRecipes)
 }
 
 //Filtrer par nom avec la methode includes
@@ -151,7 +203,7 @@ function displayAppliances(recipes) {
     applianceElement.classList.add('appareils_results');
     applianceElement.textContent = appliance;
     applianceElement.setAttribute('data-appliance', appliance.toLowerCase());
-    document.querySelector('.filter_appareils',).appendChild(applianceElement);
+    document.querySelector('.filter_appareils').appendChild(applianceElement);
   }
 }
 
@@ -177,7 +229,7 @@ function displayUstensiles(recipes) {
     ustensilElement.classList.add('ustensiles_results');
     ustensilElement.textContent = ustensil;
     ustensilElement.setAttribute('data-ustensil', ustensil.toLowerCase());
-    document.querySelector('.filter_ustensiles',).appendChild(ustensilElement);
+    document.querySelector('.filter_ustensiles').appendChild(ustensilElement);
   }
 }
 
@@ -373,15 +425,14 @@ function addIngredient(ingredientEvent) {
     searchTag.removeChild(tagContainer); // Supprimer le tag sélectionné
     const index = tagIngredientsSelected.indexOf(itemsSelected);
     if (index !== -1) {
-      console.log(tagIngredientsSelected);
       tagIngredientsSelected.splice(index, 1);
     }
-    console.log(tagIngredientsSelected);
+
     filterRecipesByTag();
   });
 
   tagIngredientsSelected.push(itemsSelected);
-  console.log(tagIngredientsSelected);
+
   filterRecipesByTag();
 }
 // Verification si un ingredient est deja selectionné en comparant son nom avec les ingredients séléctionés
@@ -418,7 +469,7 @@ function filterIngredients(tag) {
     const isSearchMatch = availableIngredients.includes(ingredientName);
     const isSelected = isIngredientSelected(ingredientName, selectedIngredients);
 
-    if ((searchValue && (isTagMatch || isSearchMatch)) ||  isSelected) {
+    if ((searchValue && (isTagMatch || isSearchMatch)) || isSelected) {
       item.classList.remove('none');
     } else {
       item.classList.add('none');
@@ -647,5 +698,4 @@ async function init() {
   triggerFilterAppliances();
   triggerFilterUstensils();
 }
-
 init();
