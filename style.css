@@ -436,6 +436,11 @@ main {
     top: 25px;
 }
 
+.valid {
+    display: block!important;
+}
+
+
 @media screen and (max-width : 1200px) {
     #logo_search {
         right: 130px;
