@@ -96,70 +96,44 @@ function updateFilterLists() {
       }
     });
   });
-  console.log('INGREDIENT FILTRE :', filteredIngredients);
-  console.log('APPLIANCE FILTRE :', filteredAppliances);
-  console.log('USTENSIL FILTRE :', filteredUstensils);
 
-  // Effacer les éléments indésirables des listes précédentes
+  // afficher ou éffacer les éléments indésirables des listes
   const ingredientListItems = document.querySelectorAll('.ingredients_results');
   ingredientListItems.forEach((item) => {
-    const ingredientName = item.innerText.toLowerCase().trim();
+    const ingredientName = item.getAttribute('data-ingredient').toLowerCase().trim();
     if (!filteredIngredients.includes(ingredientName)) {
-      item.classList.remove('valid');
-      item.classList.add('none');
+      item.classList.add('hidden');
+    } else {
+      item.setAttribute('data-valid', 'true');
+      item.classList.remove('hidden');
     }
   });
 
   const appplianceListItems = document.querySelectorAll('.appareils_results');
   appplianceListItems.forEach((item) => {
-    const applianceName = item.innerText.toLowerCase().trim();
+    const applianceName = item.getAttribute('data-appliance').toLowerCase().trim();
     if (!filteredAppliances.includes(applianceName)) {
-      item.classList.remove('valid');
-      item.classList.add('none');
+      item.classList.add('hidden');
+    } else {
+      item.setAttribute('data-valid', 'true');
+      item.classList.remove('hidden');
     }
   });
 
   const ustensilListItems = document.querySelectorAll('.ustensiles_results');
   ustensilListItems.forEach((item) => {
-    const ustensilName = item.innerText.toLowerCase().trim();
+    const ustensilName = item.getAttribute('data-ustensil').toLowerCase().trim();
     if (!filteredUstensils.includes(ustensilName)) {
-      item.classList.remove('valid');
-      item.classList.add('none');
+
+      item.classList.add('hidden');
+    } else {
+      item.setAttribute('data-valid', 'true');
+      item.classList.remove('hidden');
     }
   });
-
-  // Afficher les nouveaux éléments filtrés
-  filteredIngredients.forEach((ingredientName) => {
-    const item = document.querySelector('.ingredients_results.' + ingredientName);
-    if (item) {
-      item.classList.remove('none');
-      item.classList.add('valid');
-    }
-  });
-
-  filteredAppliances.forEach((applianceName) => {
-    const item = document.querySelector('.appareils_results.' + applianceName);
-    if (item) {
-      item.classList.remove('none');
-      item.classList.add('valid');
-    }
-  });
-
-  filteredUstensils.forEach((ustensilName) => {
-    const item = document.querySelector('.ustensiles_results.' + ustensilName);
-    if (item) {
-      item.classList.remove('none');
-      item.classList.add('valid');
-    }
-  });
-
   console.log('INGREDIENT FILTRE :', filteredIngredients);
   console.log('APPLIANCE FILTRE :', filteredAppliances);
   console.log('USTENSIL FILTRE :', filteredUstensils);
-
-  filterIngredients(true);
-  filterAppliances(true);
-  filterUstensils(true);
 }
 
 // Filter les recettes avec la methode filter en recherchant par titre de la recette et dans la description
@@ -365,7 +339,7 @@ function getAvailableUstensils(recipes) {
 // Afficher la liste des ingrédients au clique et cacher la liste lors de la perte du focus
 function openDropDownIngredient() {
   filterEventIngredient.classList.add('flex');
-  listEventIngredient.classList.remove('none');
+  listEventIngredient.classList.remove('hidden_ul');
   inputPlaceHolderIngredient.placeholder = 'Rechercher un ingrédient';
   inputPlaceHolderIngredient.classList.add('opacity');
   inputPlaceHolderIngredient.classList.add('cursor');
@@ -374,7 +348,7 @@ function openDropDownIngredient() {
 
 function closeDropDownIngredient() {
   filterEventIngredient.classList.remove('flex');
-  listEventIngredient.classList.add('none');
+  listEventIngredient.classList.add('hidden_ul');
   inputPlaceHolderIngredient.placeholder = 'Ingrédients';
   inputPlaceHolderIngredient.classList.remove('opacity');
   inputPlaceHolderIngredient.classList.remove('cursor');
@@ -393,7 +367,7 @@ function triggerDisplayListIngredients() {
 //Afficher la liste des appareils au clique et cacher la liste lors de la perte du focus
 function openDropDownAppliance() {
   filterEventAppliance.classList.add('flex');
-  listEventAppliance.classList.remove('none');
+  listEventAppliance.classList.remove('hidden_ul');
   inputPlaceHolderAppliance.placeholder = 'Rechercher un appareils';
   inputPlaceHolderAppliance.classList.add('opacity');
   inputPlaceHolderAppliance.classList.add('cursor');
@@ -402,7 +376,7 @@ function openDropDownAppliance() {
 
 function closeDropDownAppliance() {
   filterEventAppliance.classList.remove('flex');
-  listEventAppliance.classList.add('none');
+  listEventAppliance.classList.add('hidden_ul');
   inputPlaceHolderAppliance.placeholder = 'Appareils';
   inputPlaceHolderAppliance.classList.remove('opacity');
   inputPlaceHolderAppliance.classList.remove('cursor');
@@ -422,7 +396,7 @@ function triggerDisplayListAppliances() {
 
 function openDropDownUstensiles() {
   filterEventUstensiles.classList.add('flex');
-  listEventUstensiles.classList.remove('none');
+  listEventUstensiles.classList.remove('hidden_ul');
   inputPlaceHolderUstensiles.placeholder = 'Rechercher un ustensile';
   inputPlaceHolderUstensiles.classList.add('opacity');
   inputPlaceHolderUstensiles.classList.remove('cursor');
@@ -431,7 +405,7 @@ function openDropDownUstensiles() {
 
 function closeDropDownUstensiles() {
   filterEventUstensiles.classList.remove('flex');
-  listEventUstensiles.classList.add('none');
+  listEventUstensiles.classList.add('hidden_ul');
   inputPlaceHolderUstensiles.placeholder = 'Ustensiles';
   inputPlaceHolderUstensiles.classList.remove('opacity');
   dropDownArrowUstensile.setAttribute('class', 'fas fa-chevron-down arrow');

@@ -422,6 +422,9 @@ main {
 .none {
     display: none;
 }
+.hidden_ul {
+    display:none;
+}
 
 .flex {
     width: 667px;
@@ -438,6 +441,9 @@ main {
 
 .valid {
     display: block!important;
+}
+.hidden {
+    display: none!important;
 }
 
 
