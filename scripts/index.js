@@ -45,7 +45,7 @@ function searchBar() {
     request = wordGroup.join(' ');
     description = wordGroup.join(' ');
     filterRecipes();
-    updateFilterLists()
+    updateFilterLists();
   });
 }
 //Rechercher une recette en filtrant avec toutes les façon demandées
@@ -98,13 +98,15 @@ function updateFilterLists() {
   });
 
   // afficher ou éffacer les éléments indésirables des listes
+  const searchValue = document.getElementById('searchbar').value.toLowerCase();
   const ingredientListItems = document.querySelectorAll('.ingredients_results');
+
   ingredientListItems.forEach((item) => {
     const ingredientName = item.getAttribute('data-ingredient').toLowerCase().trim();
-    if (!filteredIngredients.includes(ingredientName)) {
+    const ingredientSelected = ingredientName.includes(searchValue);
+    if (!filteredIngredients.includes(ingredientName) || ingredientSelected ) {
       item.classList.add('hidden');
     } else {
-      item.setAttribute('data-valid', 'true');
       item.classList.remove('hidden');
     }
   });
@@ -112,10 +114,10 @@ function updateFilterLists() {
   const appplianceListItems = document.querySelectorAll('.appareils_results');
   appplianceListItems.forEach((item) => {
     const applianceName = item.getAttribute('data-appliance').toLowerCase().trim();
-    if (!filteredAppliances.includes(applianceName)) {
+    const applianceSelected = applianceName.includes(searchValue);
+    if (!filteredAppliances.includes(applianceName) || applianceSelected) {
       item.classList.add('hidden');
     } else {
-      item.setAttribute('data-valid', 'true');
       item.classList.remove('hidden');
     }
   });
@@ -123,11 +125,10 @@ function updateFilterLists() {
   const ustensilListItems = document.querySelectorAll('.ustensiles_results');
   ustensilListItems.forEach((item) => {
     const ustensilName = item.getAttribute('data-ustensil').toLowerCase().trim();
-    if (!filteredUstensils.includes(ustensilName)) {
-
+    const ustensilSelected = ustensilName.includes(searchValue);
+    if (!filteredUstensils.includes(ustensilName) || ustensilSelected) {
       item.classList.add('hidden');
     } else {
-      item.setAttribute('data-valid', 'true');
       item.classList.remove('hidden');
     }
   });
