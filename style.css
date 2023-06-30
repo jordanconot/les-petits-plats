@@ -422,6 +422,9 @@ main {
 .none {
     display: none;
 }
+.hidden_ul {
+    display:none;
+}
 
 .flex {
     width: 667px;
@@ -435,6 +438,14 @@ main {
     color: white;
     top: 25px;
 }
+
+.valid {
+    display: block!important;
+}
+.hidden {
+    display: none!important;
+}
+
 
 @media screen and (max-width : 1200px) {
     #logo_search {

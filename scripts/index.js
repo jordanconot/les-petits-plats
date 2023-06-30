@@ -1,7 +1,7 @@
 import { getRecipes } from './api.js';
 import { displayData } from './factory.js';
 
-//Tableau pour stocker les datas
+// Data storage
 let request = '';
 let allRecipes = [];
 let ingredients = [];
@@ -13,11 +13,25 @@ let tagIngredientsSelected = [];
 let tagAppliancesSelected = [];
 let tagUstensilsSelected = [];
 let wordGroup = [];
-let selectedIngredients = [];
 let availableIngredients = [];
+let availableAppliances = [];
+let availableUstensils = [];
 
+// Declaration of constante
+const filterEventUstensiles = document.getElementById('tags_ustensile');
+const listEventUstensiles = document.querySelector('.filter_ustensiles');
+const dropDownArrowUstensile = document.querySelector('.arrow_ustensiles');
+const inputPlaceHolderUstensiles = document.getElementById('ustensiles_input');
+const filterEventAppliance = document.getElementById('tags_appareil');
+const listEventAppliance = document.querySelector('.filter_appareils');
+const dropDownArrowAppliance = document.querySelector('.arrow_appareils');
+const inputPlaceHolderAppliance = document.getElementById('appareils_input');
+const filterEventIngredient = document.getElementById('tags_ingredient');
+const listEventIngredient = document.querySelector('.filter_ingredients');
+const dropDownArrowIngredient = document.querySelector('.arrow_ingredients');
+const inputPlaceHolderIngredient = document.getElementById('ingredients_input');
 
-
+//---------------------------------------------------------------FILTER MAIN SEARCHBAR--------------------------------------------------------
 
 // Rechercher une recette avec la bar de recherche
 function searchBar() {
@@ -30,8 +44,80 @@ function searchBar() {
     wordGroup = e.target.value.trim().toLowerCase().split(' ');
     request = wordGroup.join(' ');
     description = wordGroup.join(' ');
+
     filterRecipes();
+    updateFilterLists();
   });
+}
+// Filtrer les listes déroulantes depuis la recherche principales
+function updateFilterLists() {
+  let filteredIngredients = [];
+  let filteredAppliances = [];
+  let filteredUstensils = [];
+
+  filteredRecipes.forEach((recipe) => {
+    recipe.ingredients.forEach((ingredient) => {
+      const ingredientName = ingredient.ingredient.toLowerCase().trim();
+      if (!filteredIngredients.includes(ingredientName)) {
+        filteredIngredients.push(ingredientName);
+      }
+    });
+
+    if (recipe.appliance && !filteredAppliances.includes(recipe.appliance.toLowerCase())) {
+      filteredAppliances.push(recipe.appliance.toLowerCase());
+    }
+
+    recipe.ustensils.forEach((ustensil) => {
+      const ustensilName = ustensil.toLowerCase().trim();
+      if (!filteredUstensils.includes(ustensilName)) {
+        filteredUstensils.push(ustensilName);
+      }
+    });
+  });
+
+  // Afficher ou masquer les éléments indésirables des listes
+  const searchValue = document.getElementById('searchbar').value.toLowerCase();
+
+  const ingredientListItems = document.querySelectorAll('.ingredients_results');
+  const appplianceListItems = document.querySelectorAll('.appareils_results');
+  const ustensilListItems = document.querySelectorAll('.ustensiles_results');
+
+  ingredientListItems.forEach((item) => {
+    const ingredientName = item.getAttribute('data-ingredient').toLowerCase().trim();
+    const ingredientSelected = ingredientName.includes(searchValue);
+
+    if (!filteredIngredients.includes(ingredientName) || ingredientSelected) {
+      item.classList.add('hidden');
+    } else {
+      item.classList.remove('hidden');
+    }
+  });
+
+  appplianceListItems.forEach((item) => {
+    const applianceName = item.getAttribute('data-appliance').toLowerCase().trim();
+    const applianceSelected = applianceName.includes(searchValue);
+
+    if (!filteredAppliances.includes(applianceName) || applianceSelected) {
+      item.classList.add('hidden');
+    } else {
+      item.classList.remove('hidden');
+    }
+  });
+
+  ustensilListItems.forEach((item) => {
+    const ustensilName = item.getAttribute('data-ustensil').toLowerCase().trim();
+    const ustensilSelected = ustensilName.includes(searchValue);
+
+    if (!filteredUstensils.includes(ustensilName) || ustensilSelected) {
+      item.classList.add('hidden');
+    } else {
+      item.classList.remove('hidden');
+    }
+  });
+
+  console.log('INGREDIENTS FILTRÉS :', filteredIngredients);
+  console.log('APPAREILS FILTRÉS :', filteredAppliances);
+  console.log('USTENSILES FILTRÉS :', filteredUstensils);
 }
 
 //Rechercher une recette en filtrant avec toutes les façon demandées
@@ -58,107 +144,6 @@ function filterByWordGroup(recipe) {
   });
 }
 
-// Filter les recettes avec la methode filter en recherchant par titre de la recette et dans la description
-function filterRecipes() {
-  const recipes = allRecipes.filter((recipe) => {
-    return filterByRequest(recipe);
-  });
-  filteredRecipes = recipes;
-  displayData(recipes);
-}
-
-// function filterBySelected(recipe) {
-//   return (
-//     filterByIngredient(recipe) || filterBySelectedIngredients(recipe) || filterBySelectedAppliances(recipe)
-//   )
-// }
-
-// Filtrer par tags ingredients
-function filterBySelectedIngredients(recipe) {
-  if (tagIngredientsSelected.length === 0) {
-    return true;
-  }
-  return (
-    recipe.ingredients.filter((ingredient) => {
-      return tagIngredientsSelected.some(
-        (selectedIngredient) => selectedIngredient.toLowerCase() === ingredient.ingredient.toLowerCase(),
-      );
-    }).length === tagIngredientsSelected.length
-  );
-}
-
-//Afficher les recettes par tags ingredients sélectionnés
-function filterRecipesByIngredientsSelected() {
-  const recipes = allRecipes.filter((recipe) => {
-    return filterBySelectedIngredients(recipe);
-  });
-  filteredRecipes = recipes;
-  availableIngredients = getAvailableIngredients(recipes);
-  const availableAppliances = getAvailableAppliances(recipes);
-  const availableUstensils = getAvailableUstensils(recipes);
-
-  filterIngredients();
-  filterAppliances(availableAppliances);
-  filterUstensils(availableUstensils);
-  displayData(recipes);
-}
-
-// Filtrer par tags appareils
-function filterBySelectedAppliances(recipe) {
-  if (tagAppliancesSelected.length === 0) {
-    return true;
-  }
-  return tagAppliancesSelected.some((selectedAppliance) => {
-    return recipe.appliance.toLowerCase() === selectedAppliance.toLowerCase();
-  });
-}
-
-//Afficher les recettes par tags appareils sélectionnés
-function filterRecipesByAppliancesSelected() {
-  const recipes = allRecipes.filter((recipe) => {
-    return filterBySelectedAppliances(recipe);
-  });
-  filteredRecipes = recipes;
-  const availableAppliances = getAvailableAppliances(recipes);
-  const availableIngredients = getAvailableIngredients(recipes);
-  const availableUstensils = getAvailableUstensils(recipes);
-
-  filterAppliances(availableAppliances);
-  filterIngredients(availableIngredients);
-  filterUstensils(availableUstensils);
-  displayData(recipes);
-}
-
-// Filtrer par ustensiles sélectionnés
-function filterBySelectedUstensils(recipe) {
-  if (tagUstensilsSelected.length === 0) {
-    return true;
-  }
-  return tagUstensilsSelected.every((selectedUstensil) => {
-    return recipe.ustensils.some((ustensil) => {
-      return ustensil.toLowerCase() === selectedUstensil.toLowerCase();
-    });
-  });
-}
-
-// Filtrer les recettes par ustensiles sélectionnés
-function filterRecipesByUstensilsSelected() {
-  const recipes = allRecipes.filter((recipe) => {
-    return filterBySelectedUstensils(recipe);
-  });
-  filteredRecipes = recipes;
-  const availableUstensils = getAvailableUstensils(recipes);
-  const availableIngredients = getAvailableIngredients(recipes);
-  const availableAppliances = getAvailableAppliances(recipes);
-
-  filterAppliances(availableAppliances);
-  filterUstensils(availableUstensils);
-  filterIngredients(availableIngredients);
-  displayData(recipes);
-}
-
-
-
 //Filtrer par nom avec la methode includes
 function filterByName(recipe) {
   if (request === '') {
@@ -180,16 +165,117 @@ function filterByIngredient(recipe) {
   if (ingredients.length === 0) {
     return true;
   }
-  console.log(recipe);
   return (
     recipe.ingredients.filter((ingredient) => {
-
       return ingredients.includes(ingredient.ingredient);
     }).length === ingredients.length
   );
 }
+// Filter les recettes avec la methode filter en recherchant par titre de la recette et dans la description
+function filterRecipes() {
+  const recipes = allRecipes.filter((recipe) => {
+    return filterByRequest(recipe);
+  });
+  filteredRecipes = recipes;
+  displayData(filteredRecipes);
+}
+//-------------------------------------------------------------END FILTER MAIN SEARCHBAR--------------------------------------------------------
 
-//Afficher la liste des ingredients
+//-------------------------------------------------------------FILTER TAG-----------------------------------------------------------------------
+function filterRecipesByTag() {
+  const recipes = allRecipes.filter((recipe) => {
+    return (
+      filterBySelectedIngredients(recipe) && filterBySelectedAppliances(recipe) && filterBySelectedUstensils(recipe)
+    );
+  });
+
+  filteredRecipes = recipes;
+  availableIngredients = getAvailableIngredients(recipes);
+  availableAppliances = getAvailableAppliances(recipes);
+  availableUstensils = getAvailableUstensils(recipes);
+
+  filterIngredients(true);
+  filterAppliances(true);
+  filterUstensils(true);
+  displayData(filteredRecipes);
+}
+// Filtrer par tags ingredients
+function filterBySelectedIngredients(recipe) {
+  if (tagIngredientsSelected.length === 0) {
+    return true;
+  }
+  return (
+    recipe.ingredients.filter((ingredient) => {
+      return tagIngredientsSelected.some(
+        (selectedIngredient) => selectedIngredient.toLowerCase() === ingredient.ingredient.toLowerCase(),
+      );
+    }).length === tagIngredientsSelected.length
+  );
+}
+// Filtrer par tags appareils
+function filterBySelectedAppliances(recipe) {
+  if (tagAppliancesSelected.length === 0) {
+    return true;
+  }
+  return tagAppliancesSelected.some((selectedAppliance) => {
+    return recipe.appliance.toLowerCase() === selectedAppliance.toLowerCase();
+  });
+}
+
+// Filtrer par ustensiles sélectionnés
+function filterBySelectedUstensils(recipe) {
+  if (tagUstensilsSelected.length === 0) {
+    return true;
+  }
+  return tagUstensilsSelected.every((selectedUstensil) => {
+    return recipe.ustensils.some((ustensil) => {
+      return ustensil.toLowerCase() === selectedUstensil.toLowerCase();
+    });
+  });
+}
+//-------------------------------------------------------------END FILTER TAG---------------------------------------------------------------------
+
+//-------------------------------------------------------------RECOVERY VALID ITEMS---------------------------------------------------------------
+function getAvailableIngredients(recipes) {
+  recipes.forEach((recipe) => {
+    recipe.ingredients.forEach((ingredient) => {
+      const ingredientName = ingredient.ingredient.toLowerCase();
+      if (!availableIngredients.includes(ingredientName)) {
+        availableIngredients.push(ingredientName);
+      }
+    });
+  });
+  return availableIngredients;
+}
+
+function getAvailableAppliances(recipes) {
+  recipes.forEach((recipe) => {
+    if (recipe.appliance) {
+      const applianceName = recipe.appliance.toLowerCase();
+      if (!availableAppliances.includes(applianceName)) {
+        availableAppliances.push(applianceName);
+      }
+    }
+  });
+  return availableAppliances;
+}
+
+function getAvailableUstensils(recipes) {
+  recipes.forEach((recipe) => {
+    recipe.ustensils.forEach((ustensil) => {
+      const ustensilName = ustensil.toLowerCase();
+      if (!availableUstensils.includes(ustensilName)) {
+        availableUstensils.push(ustensilName);
+      }
+    });
+  });
+  return availableUstensils;
+}
+//-------------------------------------------------------------END RECOVERY VALID ITEMS-------------------------------------------------------------
+
+//-------------------------------------------------------------DISPLAY DROPDOWN---------------------------------------------------------------------
+
+//Récupérer la liste des ingredients
 function displayIngredients(recipes) {
   let array = [];
   let repetitionIngredients = [];
@@ -203,16 +289,17 @@ function displayIngredients(recipes) {
       ingredients.push(items.toLowerCase());
     }
   }
-
   repetitionIngredients = ingredients.filter((item, index) => ingredients.indexOf(item) === index).sort();
   for (let l = 0; l < repetitionIngredients.length; l++) {
-    document.querySelector(
-      '.filter_ingredients',
-    ).innerHTML += `<li class="ingredients_results">${repetitionIngredients[l]}</li>`;
+    const ingredient = repetitionIngredients[l];
+    const ingredientElement = document.createElement('li');
+    ingredientElement.classList.add('ingredients_results');
+    ingredientElement.textContent = ingredient;
+    ingredientElement.setAttribute('data-ingredient', ingredient.toLowerCase());
+    document.querySelector('.filter_ingredients').appendChild(ingredientElement);
   }
 }
-
-//Afficher la liste des appareils
+//Récupérer la liste des appareils
 function displayAppliances(recipes) {
   let repetitionAppliances = [];
   document.querySelector('.filter_appareils').innerHTML = '';
@@ -221,13 +308,15 @@ function displayAppliances(recipes) {
   }
   repetitionAppliances = appliances.filter((item, index) => appliances.indexOf(item) === index).sort();
   for (let j = 0; j < repetitionAppliances.length; j++) {
-    document.querySelector(
-      '.filter_appareils',
-    ).innerHTML += `<li class="appareils_results">${repetitionAppliances[j]}</li>`;
+    const appliance = repetitionAppliances[j];
+    const applianceElement = document.createElement('li');
+    applianceElement.classList.add('appareils_results');
+    applianceElement.textContent = appliance;
+    applianceElement.setAttribute('data-appliance', appliance.toLowerCase());
+    document.querySelector('.filter_appareils').appendChild(applianceElement);
   }
 }
-
-//afficher la liste des ustensiles
+//Récupér la liste des ustensiles
 function displayUstensiles(recipes) {
   let array = [];
   let repetitionUstensiles = [];
@@ -244,146 +333,91 @@ function displayUstensiles(recipes) {
 
   repetitionUstensiles = ustensils.filter((item, index) => ustensils.indexOf(item) === index).sort();
   for (let l = 0; l < repetitionUstensiles.length; l++) {
-    document.querySelector(
-      '.filter_ustensiles',
-    ).innerHTML += `<li class="ustensiles_results">${repetitionUstensiles[l]}</li>`;
+    const ustensil = repetitionUstensiles[l];
+    const ustensilElement = document.createElement('li');
+    ustensilElement.classList.add('ustensiles_results');
+    ustensilElement.textContent = ustensil;
+    ustensilElement.setAttribute('data-ustensil', ustensil.toLowerCase());
+    document.querySelector('.filter_ustensiles').appendChild(ustensilElement);
   }
 }
-
-function getAvailableIngredients(recipes) {
-  // let availableIngredients = [];
-  
-  recipes.forEach((recipe) => {
-    recipe.ingredients.forEach((ingredient) => {
-      const ingredientName = ingredient.ingredient.toLowerCase();
-      if (!availableIngredients.includes(ingredientName)) {
-        availableIngredients.push(ingredientName);
-      }
-    });
-  });
-  return availableIngredients;
-}
-
-
-function getAvailableAppliances(recipes) {
-  const availableAppliances = [];
-  recipes.forEach((recipe) => {
-    if (recipe && recipe.appliance) {
-      const applianceName = recipe.appliance.toLowerCase();
-      if (!availableAppliances.includes(applianceName)) {
-        availableAppliances.push(applianceName);
-      }
-    }
-  });
-  return availableAppliances;
-}
-
-function getAvailableUstensils(recipes) {
-  const availableUstensils = [];
-  recipes.forEach((recipe) => {
-    recipe.ustensils.forEach((ustensil) => {
-      const ustensilName = ustensil.toLowerCase();
-      if (!availableUstensils.includes(ustensilName)) {
-        availableUstensils.push(ustensilName);
-      }
-    });
-  });
-  return availableUstensils;
-}
-
 // Afficher la liste des ingrédients au clique et cacher la liste lors de la perte du focus
-const filterEventIngredient = document.getElementById('tags_ingredient');
-const listEventIngredient = document.querySelector('.filter_ingredients');
-const dropDownArrowIngredient = document.querySelector('.arrow_ingredients');
-const inputPlaceHolderIngredient = document.getElementById('ingredients_input');
-
 function openDropDownIngredient() {
   filterEventIngredient.classList.add('flex');
-  listEventIngredient.classList.remove('none');
+  listEventIngredient.classList.remove('hidden_ul');
   inputPlaceHolderIngredient.placeholder = 'Rechercher un ingrédient';
   inputPlaceHolderIngredient.classList.add('opacity');
   inputPlaceHolderIngredient.classList.add('cursor');
   dropDownArrowIngredient.setAttribute('class', 'fas fa-chevron-up arrow');
 }
-
 function closeDropDownIngredient() {
   filterEventIngredient.classList.remove('flex');
-  listEventIngredient.classList.add('none');
+  listEventIngredient.classList.add('hidden_ul');
   inputPlaceHolderIngredient.placeholder = 'Ingrédients';
   inputPlaceHolderIngredient.classList.remove('opacity');
   inputPlaceHolderIngredient.classList.remove('cursor');
   dropDownArrowIngredient.setAttribute('class', 'fas fa-chevron-down arrow');
 }
-
-filterEventIngredient.addEventListener('click', openDropDownIngredient);
-document.addEventListener('click', (e) => {
-  if (!document.querySelector('.filter_select_ingredients').contains(e.target)) {
-    closeDropDownIngredient();
-  }
-});
-
+function triggerDisplayListIngredients() {
+  filterEventIngredient.addEventListener('click', openDropDownIngredient);
+  document.addEventListener('click', (e) => {
+    if (!document.querySelector('.filter_select_ingredients').contains(e.target)) {
+      closeDropDownIngredient();
+    }
+  });
+}
 //Afficher la liste des appareils au clique et cacher la liste lors de la perte du focus
-const filterEventAppliance = document.getElementById('tags_appareil');
-const listEventAppliance = document.querySelector('.filter_appareils');
-const dropDownArrowAppliance = document.querySelector('.arrow_appareils');
-const inputPlaceHolderAppliance = document.getElementById('appareils_input');
-
 function openDropDownAppliance() {
   filterEventAppliance.classList.add('flex');
-  listEventAppliance.classList.remove('none');
+  listEventAppliance.classList.remove('hidden_ul');
   inputPlaceHolderAppliance.placeholder = 'Rechercher un appareils';
   inputPlaceHolderAppliance.classList.add('opacity');
   inputPlaceHolderAppliance.classList.add('cursor');
   dropDownArrowAppliance.setAttribute('class', 'fas fa-chevron-up arrow');
 }
-
 function closeDropDownAppliance() {
   filterEventAppliance.classList.remove('flex');
-  listEventAppliance.classList.add('none');
+  listEventAppliance.classList.add('hidden_ul');
   inputPlaceHolderAppliance.placeholder = 'Appareils';
   inputPlaceHolderAppliance.classList.remove('opacity');
   inputPlaceHolderAppliance.classList.remove('cursor');
   dropDownArrowAppliance.setAttribute('class', 'fas fa-chevron-down arrow');
 }
-
-filterEventAppliance.addEventListener('click', openDropDownAppliance);
-document.addEventListener('click', (e) => {
-  if (!document.querySelector('.filter_select_appareils').contains(e.target)) {
-    closeDropDownAppliance();
-  }
-});
-
+function triggerDisplayListAppliances() {
+  filterEventAppliance.addEventListener('click', openDropDownAppliance);
+  document.addEventListener('click', (e) => {
+    if (!document.querySelector('.filter_select_appareils').contains(e.target)) {
+      closeDropDownAppliance();
+    }
+  });
+}
 //Afficher la liste des ustensiles au clique et cacher la liste lors de la perte du focus
-const filterEventUstensiles = document.getElementById('tags_ustensile');
-const listEventUstensiles = document.querySelector('.filter_ustensiles');
-const dropDownArrowUstensile = document.querySelector('.arrow_ustensiles');
-const inputPlaceHolderUstensiles = document.getElementById('ustensiles_input');
-
 function openDropDownUstensiles() {
   filterEventUstensiles.classList.add('flex');
-  listEventUstensiles.classList.remove('none');
+  listEventUstensiles.classList.remove('hidden_ul');
   inputPlaceHolderUstensiles.placeholder = 'Rechercher un ustensile';
   inputPlaceHolderUstensiles.classList.add('opacity');
   inputPlaceHolderUstensiles.classList.remove('cursor');
   dropDownArrowUstensile.setAttribute('class', 'fas fa-chevron-up arrow');
 }
-
 function closeDropDownUstensiles() {
   filterEventUstensiles.classList.remove('flex');
-  listEventUstensiles.classList.add('none');
+  listEventUstensiles.classList.add('hidden_ul');
   inputPlaceHolderUstensiles.placeholder = 'Ustensiles';
   inputPlaceHolderUstensiles.classList.remove('opacity');
   dropDownArrowUstensile.setAttribute('class', 'fas fa-chevron-down arrow');
 }
+function triggerDisplayListUstensiles() {
+  filterEventUstensiles.addEventListener('click', openDropDownUstensiles);
+  document.addEventListener('click', (e) => {
+    if (!document.querySelector('.filter_select_ustensiles').contains(e.target)) {
+      closeDropDownUstensiles();
+    }
+  });
+}
+//-----------------------------------------------------------END DISPLAY DROPDOWN-----------------------------------------------------------------------
 
-filterEventUstensiles.addEventListener('click', openDropDownUstensiles);
-document.addEventListener('click', (e) => {
-  if (!document.querySelector('.filter_select_ustensiles').contains(e.target)) {
-    closeDropDownUstensiles();
-  }
-});
-
-//--------------------------------------------INGREDIENT---------------------------------------------------------------------------------
+//-----------------------------------------------------------MANAGE TAG INGREDIENT----------------------------------------------------------------------
 
 //Selectionner un ingredient
 function addIngredient(ingredientEvent) {
@@ -400,23 +434,12 @@ function addIngredient(ingredientEvent) {
     const index = tagIngredientsSelected.indexOf(itemsSelected);
     if (index !== -1) {
       tagIngredientsSelected.splice(index, 1);
-      filterRecipesByIngredientsSelected();
     }
+    filterRecipesByTag();
   });
-
   tagIngredientsSelected.push(itemsSelected);
-  filterRecipesByIngredientsSelected();
+  filterRecipesByTag();
 }
-// Verification si un ingredient est deja selectionné en comparant son nom avec les ingredients séléctionés
-function isIngredientSelected(ingredientName, selectedIngredients) {
-  for (let i = 0; i < selectedIngredients.length; i++) {
-    if (selectedIngredients[i].innerText.toLowerCase() === ingredientName) {
-      return true;
-    }
-  }
-  return false;
-}
-
 //ajouter le tag ingredient
 function addTagIngredient() {
   const ingredientsList = document.querySelectorAll('.ingredients_results');
@@ -427,13 +450,21 @@ function addTagIngredient() {
     });
   }
 }
-
-// Filtrer les ingredients avec l'input ingredients------------------------- A REVOIR-----------------------------
-function filterIngredients() {
-
+// Verification si un ingredient est deja selectionné en comparant son nom avec les ingredients séléctionés
+function isIngredientSelected(ingredientName, selectedIngredients) {
+  for (let i = 0; i < selectedIngredients.length; i++) {
+    if (selectedIngredients[i].innerText.toLowerCase() === ingredientName) {
+      return true;
+    }
+  }
+  return false;
+}
+// Filtrer les ingredients avec l'input ingredients
+function filterIngredients(tag) {
   const ingredientListItems = document.querySelectorAll('.ingredients_results');
   const selectedIngredients = document.querySelectorAll('.ingredient_selected .name_items_liste');
   const searchValue = document.getElementById('ingredients_input').value.toLowerCase();
+  const input = document.getElementById('ingredients_input');
 
   ingredientListItems.forEach((item) => {
     const ingredientName = item.innerText.toLowerCase();
@@ -448,65 +479,33 @@ function filterIngredients() {
     }
   });
 
-
-
-  
-
   if (searchValue === '') {
     ingredientListItems.forEach((item) => {
       item.classList.remove('none');
     });
   }
 
-  // ingredientListItems.forEach((item) => {
-  //   const ingredientName = item.innerText.toLowerCase();
-  //   if(availableIngredients.includes(ingredientName) && !isIngredientSelected(ingredientName, selectedIngredients)) {
-  //     console.log(availableIngredients);
-  //     item.classList.remove('none');
-  //   } else {
-  //     item.classList.add('none');
-  //   }
-  // })
+  if (tag === true) {
+    input.classList.add('none');
+    ingredientListItems.forEach((item) => {
+      const ingredientName = item.innerText.toLowerCase();
+      if (availableIngredients.includes(ingredientName) && !isIngredientSelected(ingredientName, selectedIngredients)) {
+        item.classList.remove('none');
+      } else {
+        item.classList.add('none');
+      }
+    });
+    input.classList.remove('none');
+  }
 }
-
-
 //Ecouteur evenement sur l'input ingredient
-const searchTagIngredient = document.getElementById('ingredients_input');
-searchTagIngredient.addEventListener('input', filterIngredients);
-
-// const ingredientList = document.querySelectorAll('.ingredients_results');
-// ingredientList.addEventListener('click', filterIngredients);
-
-
-
-
-
-function isApplianceSelected(applianceName, selectedAppliances) {
-  for (let i = 0; i < selectedAppliances.length; i++) {
-    if (selectedAppliances[i].innerText.toLowerCase() === applianceName) {
-      return true;
-    }
-  }
-  return false;
+function triggerfilterIngredients() {
+  const searchTagIngredient = document.getElementById('ingredients_input');
+  searchTagIngredient.addEventListener('input', filterIngredients);
 }
+//-----------------------------------------------------------END MANAGE TAG INGREDIENT----------------------------------------------------------------------
 
-function isUstensilSelected(ustensilName, selectedUstensils) {
-  for (let i = 0; i < selectedUstensils.length; i++) {
-    if (selectedUstensils[i].innerText.toLowerCase() === ustensilName) {
-      return true;
-    }
-  }
-  return false;
-}
-
-
-
-
-
-
-
-//---------------------------------------------------APPLIANCE---------------------------------------------------------
-
+//-----------------------------------------------------------MANAGE TAG APPLIANCE---------------------------------------------------------------------------
 
 //Ajouter un appareil
 function addAppliance(appliancetEvent) {
@@ -521,33 +520,46 @@ function addAppliance(appliancetEvent) {
   tagContainer.querySelector('.close_btn').addEventListener('click', () => {
     searchTag.removeChild(tagContainer); // Supprimer le tag séléctionner
     const index = tagAppliancesSelected.indexOf(itemsSelected);
-    if(index !== -1) {
+    if (index !== -1) {
       tagAppliancesSelected.splice(index, 1);
-      filterRecipesByAppliancesSelected();
     }
+    filterRecipesByTag();
   });
   tagAppliancesSelected.push(itemsSelected);
-  filterRecipesByAppliancesSelected();
+  filterRecipesByTag();
 }
 // ajouter le tag appareil
 function addTagAppliance() {
   const appliancesList = document.querySelectorAll('.appareils_results');
   for (let i = 0; i < appliancesList.length; i++) {
-    appliancesList[i].addEventListener('click', addAppliance);
+    appliancesList[i].addEventListener('click', (appliancetEvent) => {
+      addAppliance(appliancetEvent);
+      appliancetEvent.target.classList.add('none');
+    });
   }
 }
-
-// Filtrer les ingredients avec l'input ingredients------------------------- A REVOIR-----------------------------
-function filterAppliances(availableAppliances) {
+function isApplianceSelected(applianceName, selectedAppliances) {
+  for (let i = 0; i < selectedAppliances.length; i++) {
+    if (selectedAppliances[i].innerText.toLowerCase() === applianceName) {
+      return true;
+    }
+  }
+  return false;
+}
+// Filtrer les ingredients avec l'input ingredients
+function filterAppliances(tag) {
   const searchValue = document.getElementById('appareils_input').value.toLowerCase();
   const applianceListItems = document.querySelectorAll('.appareils_results');
   const selectedAppliances = document.querySelectorAll('.appareil_selected .name_items_liste');
-  
+  const input = document.getElementById('appareils_input');
+
   applianceListItems.forEach((item) => {
     const applianceName = item.innerText.toLowerCase();
-    if (searchValue && applianceName.includes(searchValue)) {
-      console.log(searchValue);
-      console.log(applianceName);
+    const isTagMatch = applianceName.includes(searchValue);
+    const isSearchMatch = availableAppliances.includes(applianceName);
+    const isSelected = isApplianceSelected(applianceName, selectedAppliances);
+
+    if ((searchValue && (isTagMatch || isSearchMatch)) || isSelected) {
       item.classList.remove('none');
     } else {
       item.classList.add('none');
@@ -559,22 +571,28 @@ function filterAppliances(availableAppliances) {
       item.classList.remove('none');
     });
   }
-  applianceListItems.forEach((item) => {
-    const applianceName = item.innerText.toLowerCase();
-    if (availableAppliances.includes(applianceName) && !isApplianceSelected(applianceName, selectedAppliances)) {
-      item.classList.remove('none');
-    } else {
-      item.classList.add('none');
-    }
-  });
+  if (tag === true) {
+    input.classList.add('none');
+    applianceListItems.forEach((item) => {
+      const applianceName = item.innerText.toLowerCase();
+      if (availableAppliances.includes(applianceName) && !isApplianceSelected(applianceName, selectedAppliances)) {
+        item.classList.remove('none');
+      } else {
+        item.classList.add('none');
+      }
+    });
+  }
+  input.classList.remove('none');
 }
 //ecouteur d'événement sur l'input appareil pour lancer la function de filtre
-const searchInputAppliance = document.getElementById('appareils_input');
-searchInputAppliance.addEventListener('input', filterAppliances);
+function triggerFilterAppliances() {
+  const searchInputAppliance = document.getElementById('appareils_input');
+  searchInputAppliance.addEventListener('input', filterAppliances);
+}
+//-----------------------------------------------------------END MANAGE TAG APPLIANCE-------------------------------------------------------------------------
 
+//-----------------------------------------------------------MANAGE TAG USTENSIL------------------------------------------------------------------------------
 
-
-//--------------------------------------------------------USTENSILS---------------------------------------------------------------
 // Ajouter un ustensile
 function addUstensil(ustensiltEvent) {
   const searchTag = document.querySelector('.tags_searched');
@@ -584,66 +602,81 @@ function addUstensil(ustensiltEvent) {
   tagContainer.classList.add('ustensile_selected');
   tagContainer.innerHTML = `<p class="name_items_liste">${itemsSelected}</p><img class="close_btn" src='./assets/close-selected.svg'></i>`;
 
-  
   searchTag.appendChild(tagContainer); // Afficher l'ustensile sélectionné
   tagContainer.querySelector('.close_btn').addEventListener('click', () => {
     searchTag.removeChild(tagContainer); // Supprimer le tag sélectionné
     const index = tagUstensilsSelected.indexOf(itemsSelected);
     if (index !== -1) {
       tagUstensilsSelected.splice(index, 1);
-      filterRecipesByUstensilsSelected();
     }
+    filterRecipesByTag();
   });
-
-  if(!tagUstensilsSelected.includes(itemsSelected)) {
-    tagUstensilsSelected.push(itemsSelected)
-    filterRecipesByUstensilsSelected();
-  }
+  tagUstensilsSelected.push(itemsSelected);
+  filterRecipesByTag();
 }
-
 // Ajouter le tag ustensile
 function addTagUstensile() {
   const ustensilesList = document.querySelectorAll('.ustensiles_results');
   ustensilesList.forEach((ustensile) => {
-    ustensile.addEventListener('click', addUstensil);
+    ustensile.addEventListener('click', (ustensiltEvent) => {
+      addUstensil(ustensiltEvent);
+      ustensiltEvent.target.classList.add('none');
+    });
   });
 }
-
-function filterUstensils(availableUstensils) {
+function isUstensilSelected(ustensilName, selectedUstensils) {
+  for (let i = 0; i < selectedUstensils.length; i++) {
+    if (selectedUstensils[i].innerText.toLowerCase() === ustensilName) {
+      return true;
+    }
+  }
+  return false;
+}
+function filterUstensils(tag) {
   const searchValue = document.getElementById('ustensiles_input').value.toLowerCase();
   const ustensilListItems = document.querySelectorAll('.ustensiles_results');
   const selectedUstensils = document.querySelectorAll('.ustensile_selected .name_items_liste');
+  const input = document.getElementById('ustensiles_input');
 
   ustensilListItems.forEach((item) => {
     const ustensilName = item.innerText.toLowerCase();
-    if(searchValue && ustensilName.includes(searchValue)) {
+    const isTagMatch = ustensilName.includes(searchValue);
+    const isSearchMatch = availableUstensils.includes(ustensilName);
+    const isSelected = isUstensilSelected(ustensilName, selectedUstensils);
+
+    if ((searchValue && (isTagMatch || isSearchMatch)) || isSelected) {
       item.classList.remove('none');
     } else {
       item.classList.add('none');
     }
   });
   //Si l'input est vide, réaffiche la liste des ustensiles
-  if(searchValue === '') {
+  if (searchValue === '') {
     ustensilListItems.forEach((item) => {
       item.classList.remove('none');
     });
   }
-  ustensilListItems.forEach((item) => {
-    const ustensilName = item.innerText.toLowerCase();
-    if(availableUstensils.includes(ustensilName) && !isUstensilSelected(ustensilName, selectedUstensils)) {
-      item.classList.remove('none');
-    } else {
-      item.classList.add('none');
-    }
-  })
+  if (tag === true) {
+    input.classList.add('none');
+    ustensilListItems.forEach((item) => {
+      const ustensilName = item.innerText.toLowerCase();
+      if (availableUstensils.includes(ustensilName) && !isUstensilSelected(ustensilName, selectedUstensils)) {
+        item.classList.remove('none');
+      } else {
+        item.classList.add('none');
+      }
+    });
+  }
+  input.classList.remove('none');
 }
-
-
-
 //écouteur d'événement sur l'input ustensiles pour lancer la fonction de filtre
-const searchInputUstensil = document.getElementById('ustensiles_input');
-searchInputUstensil.addEventListener('input', filterUstensils);
+function triggerFilterUstensils() {
+  const searchInputUstensil = document.getElementById('ustensiles_input');
+  searchInputUstensil.addEventListener('input', filterUstensils);
+}
+//-----------------------------------------------------------END MANAGE TAG USTENSIL-------------------------------------------------------------------------
 
+//-----------------------------------------------------------INIT--------------------------------------------------------------------------------------------
 // initialisation des foncions
 async function init() {
   const { recipes } = await getRecipes();
@@ -657,6 +690,11 @@ async function init() {
   addTagAppliance();
   addTagIngredient();
   addTagUstensile();
+  triggerDisplayListIngredients();
+  triggerDisplayListAppliances();
+  triggerDisplayListUstensiles();
+  triggerfilterIngredients();
+  triggerFilterAppliances();
+  triggerFilterUstensils();
 }
-
 init();
