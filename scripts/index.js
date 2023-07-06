@@ -44,9 +44,19 @@ function searchBar() {
     wordGroup = e.target.value.trim().toLowerCase().split(' ');
     request = wordGroup.join(' ');
     description = wordGroup.join(' ');
+    const isRecipeNameSelected = filteredRecipes.some((recipe) => recipe.name.toLowerCase().includes(request));
+    console.log(isRecipeNameSelected);
 
     filterRecipes();
     updateFilterLists();
+
+    if ((availableIngredients.includes(request) || isRecipeNameSelected) && !isIngredientSelected(request, tagIngredientsSelected)) {
+      tagIngredientsSelected.push(request);
+      console.log(tagIngredientsSelected);
+      filterRecipesByTag();
+      filterRecipes();
+      updateFilterLists();
+    }
   });
 }
 //TAG ok mais probleme avec la recherche
@@ -86,7 +96,6 @@ function updateFilterLists() {
     const ingredientSelected = ingredientName.includes(searchValue);
 
     if (!filteredIngredients.includes(ingredientName) || (request && ingredientSelected)) {
-      console.log(filteredIngredients);
       item.classList.add('hidden');
     } else {
       item.classList.remove('hidden');
@@ -173,21 +182,24 @@ function filterRecipes() {
     return filterByRequest(recipe);
   });
   filteredRecipes = recipes;
+  availableIngredients = getAvailableIngredients(recipes);
+  availableAppliances = getAvailableAppliances(recipes);
+  availableUstensils = getAvailableUstensils(recipes);
   displayData(filteredRecipes);
+  updateFilterLists();
 }
 //-------------------------------------------------------------END FILTER MAIN SEARCHBAR--------------------------------------------------------
 
 //-------------------------------------------------------------RECOVERY VALID ITEMS---------------------------------------------------------------
 function getAvailableIngredients(recipes) {
+  const ingredientsSet = new Set();
   recipes.forEach((recipe) => {
     recipe.ingredients.forEach((ingredient) => {
       const ingredientName = ingredient.ingredient.toLowerCase();
-      if (!availableIngredients.includes(ingredientName)) {
-        availableIngredients.push(ingredientName);
-      }
+      ingredientsSet.add(ingredientName);
     });
   });
-  return availableIngredients;
+  return Array.from(ingredientsSet);
 }
 
 function getAvailableAppliances(recipes) {
@@ -414,7 +426,8 @@ function addTagIngredient() {
 // Verification si un ingredient est deja selectionné en comparant son nom avec les ingredients séléctionés
 function isIngredientSelected(ingredientName, selectedIngredients) {
   for (let i = 0; i < selectedIngredients.length; i++) {
-    if (selectedIngredients[i].innerText.toLowerCase() === ingredientName) {
+    const selectedIngredient = selectedIngredients[i].innerText;
+    if (selectedIngredient && selectedIngredient.toLowerCase() === ingredientName) {
       return true;
     }
   }
