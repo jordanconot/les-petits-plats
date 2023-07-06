@@ -49,8 +49,10 @@ function searchBar() {
     updateFilterLists();
   });
 }
-// Filtrer les listes déroulantes depuis la recherche principales et gérer la séléction des tags
+//TAG ok mais probleme avec la recherche
+// Filtrer les listes déroulantes depuis la recherche principales
 function updateFilterLists() {
+  const searchValue = document.getElementById('searchbar').value.toLowerCase();
   let filteredIngredients = [];
   let filteredAppliances = [];
   let filteredUstensils = [];
@@ -75,8 +77,6 @@ function updateFilterLists() {
     });
   });
 
-  // Afficher ou masquer les éléments indésirables des listes
-  const searchValue = document.getElementById('searchbar').value.toLowerCase();
   const ingredientListItems = document.querySelectorAll('.ingredients_results');
   const appplianceListItems = document.querySelectorAll('.appareils_results');
   const ustensilListItems = document.querySelectorAll('.ustensiles_results');
@@ -85,7 +85,8 @@ function updateFilterLists() {
     const ingredientName = item.getAttribute('data-ingredient').toLowerCase().trim();
     const ingredientSelected = ingredientName.includes(searchValue);
 
-    if (!filteredIngredients.includes(ingredientName) || (searchValue && !ingredientSelected)) {
+    if (!filteredIngredients.includes(ingredientName) || (request && ingredientSelected)) {
+      console.log(filteredIngredients);
       item.classList.add('hidden');
     } else {
       item.classList.remove('hidden');
@@ -96,7 +97,7 @@ function updateFilterLists() {
     const applianceName = item.getAttribute('data-appliance').toLowerCase().trim();
     const applianceSelected = applianceName.includes(searchValue);
 
-    if (!filteredAppliances.includes(applianceName) || (searchValue && !applianceSelected)) {
+    if (!filteredAppliances.includes(applianceName) || (request && applianceSelected)) {
       item.classList.add('hidden');
     } else {
       item.classList.remove('hidden');
@@ -107,16 +108,12 @@ function updateFilterLists() {
     const ustensilName = item.getAttribute('data-ustensil').toLowerCase().trim();
     const ustensilSelected = ustensilName.includes(searchValue);
 
-    if (!filteredUstensils.includes(ustensilName) || (searchValue && !ustensilSelected)) {
+    if (!filteredUstensils.includes(ustensilName) || (request && ustensilSelected)) {
       item.classList.add('hidden');
     } else {
       item.classList.remove('hidden');
     }
   });
-
-  // console.log('INGREDIENTS FILTRÉS :', filteredIngredients);
-  // console.log('APPAREILS FILTRÉS :', filteredAppliances);
-  // console.log('USTENSILES FILTRÉS :', filteredUstensils);
 }
 
 //Rechercher une recette en filtrant avec toutes les façon demandées
@@ -241,6 +238,10 @@ function displayIngredients(recipes) {
     ingredientElement.classList.add('ingredients_results');
     ingredientElement.textContent = ingredient;
     ingredientElement.setAttribute('data-ingredient', ingredient.toLowerCase());
+
+    if (request && !ingredient.toLowerCase().includes(request.toLowerCase())) {
+      ingredientElement.classList.add('hidden');
+    }
     document.querySelector('.filter_ingredients').appendChild(ingredientElement);
   }
 }
@@ -258,6 +259,10 @@ function displayAppliances(recipes) {
     applianceElement.classList.add('appareils_results');
     applianceElement.textContent = appliance;
     applianceElement.setAttribute('data-appliance', appliance.toLowerCase());
+
+    if (request && !appliance.toLowerCase().includes(request.toLowerCase())) {
+      applianceElement.classList.add('hidden');
+    }
     document.querySelector('.filter_appareils').appendChild(applianceElement);
   }
 }
@@ -283,6 +288,10 @@ function displayUstensiles(recipes) {
     ustensilElement.classList.add('ustensiles_results');
     ustensilElement.textContent = ustensil;
     ustensilElement.setAttribute('data-ustensil', ustensil.toLowerCase());
+
+    if (request && !ustensil.toLowerCase().includes(request.toLowerCase())) {
+      ustensilElement.classList.add('hidden');
+    }
     document.querySelector('.filter_ustensiles').appendChild(ustensilElement);
   }
 }
@@ -393,6 +402,11 @@ function addTagIngredient() {
     ingredientsList[i].addEventListener('click', (ingredientEvent) => {
       addIngredient(ingredientEvent);
       ingredientEvent.target.classList.add('none'); // Rendre l'ingrédient sélectionné invisible dans la liste
+      const searchValue = document.getElementById('searchbar').value.toLowerCase();
+      if (searchValue !== '') {
+        request = searchValue;
+      }
+      filterRecipesByTag();
       updateFilterLists();
     });
   }
@@ -406,13 +420,13 @@ function isIngredientSelected(ingredientName, selectedIngredients) {
   }
   return false;
 }
-// Filtrer les ingredients avec l'input ingredients
+// Filtrer les ingredients
 function filterIngredients(tag) {
   const ingredientListItems = document.querySelectorAll('.ingredients_results');
   const selectedIngredients = document.querySelectorAll('.ingredient_selected .name_items_liste');
   const searchValue = document.getElementById('ingredients_input').value.toLowerCase();
   const input = document.getElementById('ingredients_input');
-
+  //By input
   ingredientListItems.forEach((item) => {
     const ingredientName = item.innerText.toLowerCase();
     const isTagMatch = ingredientName.includes(searchValue);
@@ -431,12 +445,17 @@ function filterIngredients(tag) {
       item.classList.remove('none');
     });
   }
-
+  //By Tag
   if (tag === true) {
     input.classList.add('none');
     ingredientListItems.forEach((item) => {
       const ingredientName = item.innerText.toLowerCase();
-      if (availableIngredients.includes(ingredientName) && !isIngredientSelected(ingredientName, selectedIngredients)) {
+      const isSelected = isIngredientSelected(ingredientName, selectedIngredients);
+      const isRecipeMatch = filteredRecipes.some((recipe) =>
+        recipe.ingredients.some((ingredient) => ingredient.ingredient.toLowerCase() === ingredientName),
+      );
+
+      if (availableIngredients.includes(ingredientName) && !isSelected && (!request || isRecipeMatch)) {
         item.classList.remove('none');
         item.classList.remove('hidden');
       } else {
