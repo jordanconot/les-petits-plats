@@ -48,6 +48,13 @@ function searchBar() {
     filterRecipes();
     updateFilterLists();
 
+    if(request === '') {
+      clearTags();
+      filterRecipesByTag();
+      updateFilterLists();
+      return;
+    }
+
     if (
       availableIngredients.includes(request) && !isIngredientSelected(request, tagIngredientsSelected)
     ) {
@@ -76,10 +83,17 @@ function searchBar() {
     }
   });
 }
+function clearTags() {
+  tagIngredientsSelected = [];
+  tagAppliancesSelected = [];
+  tagUstensilsSelected = [];
+}
+
 //TAG ok mais probleme avec la recherche
 // Filtrer les listes déroulantes depuis la recherche principales
 function updateFilterLists() {
   const searchValue = document.getElementById('searchbar').value.toLowerCase();
+
   let filteredIngredients = [];
   let filteredAppliances = [];
   let filteredUstensils = [];
@@ -94,6 +108,7 @@ function updateFilterLists() {
 
     if (recipe.appliance && !filteredAppliances.includes(recipe.appliance.toLowerCase())) {
       filteredAppliances.push(recipe.appliance.toLowerCase());
+      console.log('FILTERED APPLIANCES', filteredAppliances);
     }
 
     recipe.ustensils.forEach((ustensil) => {
@@ -124,6 +139,7 @@ function updateFilterLists() {
     const applianceSelected = applianceName.includes(searchValue);
 
     if (!filteredAppliances.includes(applianceName) || (request && applianceSelected)) {
+      console.log('DISPLAY APPLIANCES', filteredAppliances);
       item.classList.add('hidden');
     } else {
       item.classList.remove('hidden');
@@ -583,6 +599,7 @@ function filterAppliances(tag) {
       );
 
       if (availableAppliances.includes(applianceName) && !isSelected && (!request || isRecipeMatch)) {
+        console.log('DISPLAY APPLIANCES TAG', availableAppliances);
         item.classList.remove('none');
         item.classList.remove('hidden');
       } else {
@@ -709,6 +726,7 @@ function filterRecipesByTag() {
   filteredRecipes = recipes;
   availableIngredients = getAvailableIngredients(recipes);
   availableAppliances = getAvailableAppliances(recipes);
+  console.log('GET AVAILABLE APPLIANCE TAG', availableAppliances);
   availableUstensils = getAvailableUstensils(recipes);
 
   filterIngredients(true);
