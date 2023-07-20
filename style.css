@@ -78,20 +78,21 @@ main {
 
 #ingredients_input {
     background-color: #3282F7;
-}
-#ingredients_input:focus {
-    width: 667px;
-    
+    width: 215px;
 }
 
 #appareils_input {
     background-color: #68D9A4;
+    width: 210px;
 }
 
 #ustensiles_input {
     background-color: #ED6454;
+    width: 210px;
 }
-
+input:autofill {
+    display: none!important;
+}
 .tag_input {
     height: 70px;
     border-radius: 5px;
@@ -192,9 +193,8 @@ main {
     color: white;
     font-style: normal;
     font-weight: 700;
-    font-size: 18px;
+    font-size: 19px;
     line-height: 22px;
-    text-align: center;
 }
 
 /*--------------Gallery--------------------------------*/
