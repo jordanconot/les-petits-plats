@@ -62,10 +62,14 @@ function searchBar() {
       }
     }
 
-    // Vérifier si la recherche correspond à un nom de recette
-    const matchedRecipes = allRecipes.filter((recipe) => {
-      return filterByName(recipe);
-    });
+    // Vérifier si la recherche correspond à un nom de recette (boucle native)
+    const matchedRecipes = [];
+    for(let i = 0; i < allRecipes.length; i++) {
+      const recipe = allRecipes[i];
+      if(filterByName(recipe)) {
+        matchedRecipes.push(recipe)
+      }
+    }
     if (matchedRecipes.length > 0) {
       filteredRecipes = matchedRecipes;
       displayData(filteredRecipes);
@@ -153,7 +157,7 @@ function updateFilterLists() {
   });
 }
 
-//Rechercher une recette en filtrant avec toutes les façon demandées
+//Rechercher une recette en filtrant par ingredient, nom, description et groupe de mots
 function filterByRequest(recipe) {
   return filterByIngredient(recipe) || filterByName(recipe) || filterByDescription(recipe) || filterByWordGroup(recipe);
 }
@@ -194,23 +198,30 @@ function filterByDescription(recipe) {
   return recipe.description.toLowerCase().includes(description.toLowerCase());
 }
 
-//Filtrer par ingredient avec la methode includes
+//Filtrer par ingredient avec la methode includes (boucle native)
 function filterByIngredient(recipe) {
   if (ingredients.length === 0) {
     return true;
   }
-  return (
-    recipe.ingredients.filter((ingredient) => {
-      return ingredients.includes(ingredient.ingredient);
-    }).length === ingredients.length
-  );
+  let count = 0;
+  for(let i = 0; i < recipe.ingredients.length; i++) {
+    const ingredient = recipe.ingredients[i].ingredient;
+    if(ingredients.includes(ingredient)) {
+      count++
+    }
+  }
+  return count === ingredients.length
 }
 
-// Filter les recettes avec la methode filter en recherchant par titre de la recette et dans la description
+// Filter les recettes et les afficher (boucle native)
 function filterRecipes() {
-  const recipes = allRecipes.filter((recipe) => {
-    return filterByRequest(recipe);
-  });
+  const recipes = [];
+  for(let i = 0; i < allRecipes.length; i++) {
+    const recipe = allRecipes[i];
+    if(filterByRequest(recipe)) {
+      recipes.push(recipe);
+    }
+  }
   filteredRecipes = recipes;
   availableIngredients = getAvailableIngredients(recipes);
   availableAppliances = getAvailableAppliances(recipes);
