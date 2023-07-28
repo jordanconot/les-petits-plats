@@ -45,15 +45,15 @@ export function recipeFactory(data) {
     recetteInstructions.textContent = description;
     recetteInstructions.setAttribute('class', 'recette_section_instructions');
 
-    const h2 = document.createElement('h2');
-    h2.textContent = name;
-    h2.setAttribute('class', 'recette_section_title');
+    const h3 = document.createElement('h3');
+    h3.textContent = name;
+    h3.setAttribute('class', 'recette_section_title');
 
     imgContainer.appendChild(recetteContainer);
     article.appendChild(imgContainer);
     article.appendChild(recetteContainer);
     recetteContainer.appendChild(recetteTilteTime);
-    recetteTilteTime.appendChild(h2);
+    recetteTilteTime.appendChild(h3);
     recetteTilteTime.appendChild(timer);
     timer.appendChild(imgClock);
     recetteContainer.appendChild(recetteIngredientsInstructions);
@@ -69,9 +69,9 @@ export async function displayData(recipes) {
   const recipeSection = document.querySelector('.recette_section');
   recipeSection.innerHTML = '';
   if (recipes.length === 0) {
-    const h2 = document.createElement('h2');
-    h2.textContent = 'Aucun résultat ne correspond à votre critère... vous pouvez chercher << tarte aux pommes >>, << poisson >>, etc.';
-    recipeSection.appendChild(h2);
+    const h3 = document.createElement('h3');
+    h3.textContent = 'Aucun résultat ne correspond à votre critère... vous pouvez chercher << tarte aux pommes >>, << poisson >>, etc.';
+    recipeSection.appendChild(h3);
   } else {
     recipes.forEach((recipe) => {
       const recipeModel = recipeFactory(recipe);
