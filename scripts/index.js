@@ -836,7 +836,7 @@ function filterBySelectedUstensils(recipe) {
 async function init() {
   const { recipes } = await getRecipes();
   allRecipes = recipes;
-  searchBar(recipes);
+  searchBar();
   filteredRecipes = recipes;
   displayData(recipes);
   displayIngredients(recipes);
